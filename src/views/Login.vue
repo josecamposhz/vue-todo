@@ -7,41 +7,58 @@
             <v-toolbar-title>Iniciar Sesión</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-text-field
-              v-model="credenciales.email"
-              placeholder="Correo"
-              prepend-icon="mdi-email"
-              type="email"
-            />
-            <v-text-field
-              v-model="credenciales.password"
-              placeholder="Contraseña"
-              prepend-icon="mdi-lock"
-              type="password"
-            />
-            <v-btn color="primary" style="margin: auto" @click="login()">Ingresar</v-btn>
+            <v-form v-model="loginForm" ref="loginForm" onsubmit="return false;" @submit="login()">
+              <v-text-field
+                v-model="credenciales.email"
+                placeholder="Correo"
+                prepend-icon="mdi-email"
+                type="email"
+              />
+              <v-text-field
+                v-model="credenciales.password"
+                placeholder="Contraseña"
+                prepend-icon="mdi-lock"
+                type="password"
+              />
+              <v-btn color="primary" style="margin: auto" type="submit">Ingresar</v-btn>
+            </v-form>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from "vuex";
 import axios from "axios";
 
 export default {
   data() {
     return {
+      loginForm: true,
       credenciales: {
         email: "",
         password: ""
+      },
+      snackbar: {
+        isOpen: false,
+        text: "",
+        color: "success"
       }
     };
   },
   methods: {
     ...mapMutations(["setUser"]),
+    ...mapActions(["getUserTasks"]),
     login() {
       axios
         .post("/login", this.credenciales)
@@ -49,12 +66,18 @@ export default {
           let user = JSON.stringify(response.data.user);
           localStorage.setItem("user", user);
           localStorage.setItem("token", response.data.token);
-          this.setUser(response.data)
+          this.setUser(response.data);
+          this.getUserTasks()
           this.$router.push("/todo");
         })
         .catch(error => {
-          console.log(error.response.data.error);
+          this.openSnack(error.response.data.error, "error");
         });
+    },
+    openSnack(text, color) {
+      this.snackbar.isOpen = true;
+      this.snackbar.text = text;
+      this.snackbar.color = color;
     }
   }
 };

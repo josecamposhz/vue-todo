@@ -13,9 +13,9 @@
       <h1 class="navbar-title fw-light text-white">To Do App</h1>
     </router-link>
 
-    <v-spacer></v-spacer>
+    <v-spacer />
 
-    <v-chip class="mx-2" color="green" text-color="white">
+    <v-chip v-if="isLogin" class="mx-2" color="green" text-color="white">
       <v-avatar left class="green darken-4">{{ tasksCounter }}</v-avatar>
       <span class="m-auto">TO DO</span>
     </v-chip>
@@ -31,7 +31,7 @@
         <v-list-item>
           <v-btn
             text
-            href="https://github.com/JoseCamposhz/vuex-count"
+            href="https://github.com/JoseCamposhz/nodejs-todo"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -41,7 +41,7 @@
         <v-list-item>
           <v-btn
             text
-            href="https://github.com/JoseCamposhz/vuex-count"
+            href="https://github.com/JoseCamposhz/vue-todo"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -31,6 +31,10 @@ export default {
   margin-bottom: 2px;
 }
 
+.m-auto {
+  margin: auto;
+}
+
 @media (max-width: 768px) {
   .hidden-sm-down {
     display: none !important;
