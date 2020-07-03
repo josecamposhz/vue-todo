@@ -86,7 +86,7 @@ export default {
     ...mapState(["user", "tasks"]),
     ...mapGetters(["tasksCounter"])
   },
-  mounted() {
+  created() {
     this.getUserTasks();
   },
   methods: {

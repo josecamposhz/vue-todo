@@ -39,6 +39,14 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -52,6 +60,11 @@ export default {
         last_name: "",
         email: "",
         password: ""
+      },
+      snackbar: {
+        isOpen: false,
+        text: "",
+        color: "success"
       }
     };
   },
@@ -60,11 +73,11 @@ export default {
       axios
         .post("/register", this.user)
         .then(() => {
-          alert("Usuario creado con exito!");
+          this.openSnack("Usuario creado con exito", "success");
           this.$router.push("/login");
         })
         .catch(error => {
-          console.log(error.response.data.error);
+          this.openSnack(error.response.data.error, "error");
         });
     },
     clearForm() {
@@ -74,6 +87,11 @@ export default {
         email: "",
         password: ""
       };
+    },
+    openSnack(text, color) {
+      this.snackbar.isOpen = true;
+      this.snackbar.text = text;
+      this.snackbar.color = color;
     }
   }
 };

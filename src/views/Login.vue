@@ -25,15 +25,15 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
+        {{ snackbar.text }}
+        <template v-slot:action="{ attrs }">
+          <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-row>
-    <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
-      {{ snackbar.text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -63,12 +63,15 @@ export default {
       axios
         .post("/login", this.credenciales)
         .then(response => {
+          this.setUser(response.data);
           let user = JSON.stringify(response.data.user);
           localStorage.setItem("user", user);
           localStorage.setItem("token", response.data.token);
-          this.setUser(response.data);
-          this.getUserTasks()
           this.$router.push("/todo");
+          this.openSnack(
+            `Bienvenido ${user.first_name} ${user.last_name}`,
+            "success"
+          );
         })
         .catch(error => {
           this.openSnack(error.response.data.error, "error");
