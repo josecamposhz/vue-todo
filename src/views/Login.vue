@@ -68,10 +68,6 @@ export default {
           localStorage.setItem("user", user);
           localStorage.setItem("token", response.data.token);
           this.$router.push("/todo");
-          this.openSnack(
-            `Bienvenido ${user.first_name} ${user.last_name}`,
-            "success"
-          );
         })
         .catch(error => {
           this.openSnack(error.response.data.error, "error");
