@@ -39,18 +39,11 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
-      {{ snackbar.text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </template>
-    </v-snackbar>
   </v-container>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 import axios from "axios";
 export default {
   data() {
@@ -60,24 +53,28 @@ export default {
         last_name: "",
         email: "",
         password: ""
-      },
-      snackbar: {
-        isOpen: false,
-        text: "",
-        color: "success"
       }
     };
   },
   methods: {
+    ...mapMutations(["setSnack"]),
     crearUsuario() {
       axios
         .post("/register", this.user)
         .then(() => {
-          this.openSnack("Usuario creado con exito", "success");
+          this.setSnack({
+            isOpen: true,
+            text: "Usuario creado con exito",
+            color: "success"
+          });
           this.$router.push("/login");
         })
         .catch(error => {
-          this.openSnack(error.response.data.error, "error");
+          this.setSnack({
+            isOpen: true,
+            text: error.response.data.error,
+            color: "error"
+          });
         });
     },
     clearForm() {
@@ -87,11 +84,6 @@ export default {
         email: "",
         password: ""
       };
-    },
-    openSnack(text, color) {
-      this.snackbar.isOpen = true;
-      this.snackbar.text = text;
-      this.snackbar.color = color;
     }
   }
 };

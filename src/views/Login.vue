@@ -25,20 +25,12 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
-        {{ snackbar.text }}
-        <template v-slot:action="{ attrs }">
-          <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </template>
-      </v-snackbar>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapMutations, mapActions } from "vuex";
+import { mapMutations } from "vuex";
 import axios from "axios";
 
 export default {
@@ -57,8 +49,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setUser"]),
-    ...mapActions(["getUserTasks"]),
+    ...mapMutations(["setUser", "setSnack"]),
     login() {
       axios
         .post("/login", this.credenciales)
@@ -68,15 +59,19 @@ export default {
           localStorage.setItem("user", user);
           localStorage.setItem("token", response.data.token);
           this.$router.push("/todo");
+          this.setSnack({
+            isOpen: true,
+            text: `Bienvenido ${response.data.user.first_name} ${response.data.user.last_name}`,
+            color: "success"
+          });
         })
         .catch(error => {
-          this.openSnack(error.response.data.error, "error");
+          this.setSnack({
+            isOpen: true,
+            text: error.response.data.error,
+            color: "error"
+          });
         });
-    },
-    openSnack(text, color) {
-      this.snackbar.isOpen = true;
-      this.snackbar.text = text;
-      this.snackbar.color = color;
     }
   }
 };

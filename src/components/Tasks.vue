@@ -40,20 +40,12 @@
       </v-hover>
       <h1 class="text-center m-auto pa-6" v-if="tasksCounter === 0">No tienes tareas</h1>
     </v-card-text>
-    <v-snackbar v-model="snackbar.isOpen" :color="snackbar.color" bottom>
-      {{ snackbar.text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn dark icon v-bind="attrs" @click="snackbar.isOpen = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </template>
-    </v-snackbar>
   </v-card>
 </template>
 
 <script>
 import axios from "axios";
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -74,12 +66,7 @@ export default {
         { id: 0, value: "Normal", color: "success" },
         { id: 1, value: "Urgente", color: "warning" },
         { id: 2, value: "Muy urgente", color: "error" }
-      ],
-      snackbar: {
-        isOpen: false,
-        text: "",
-        color: "success"
-      }
+      ]
     };
   },
   computed: {
@@ -90,16 +77,25 @@ export default {
     this.getUserTasks();
   },
   methods: {
+    ...mapMutations(["setSnack"]),
     ...mapActions(["getUserTasks"]),
     addTask() {
       axios
         .post("tasks", this.task)
         .then(response => {
           this.getUserTasks();
-          this.openSnack(response.data, "success");
+          this.setSnack({
+            isOpen: true,
+            text: response.data,
+            color: "success"
+          });
         })
         .catch(error => {
-          this.openSnack(error.response.data.error, "error");
+          this.setSnack({
+            isOpen: true,
+            text: error.response.data.error,
+            color: "error"
+          });
         });
     },
     editTask(task) {
@@ -111,32 +107,43 @@ export default {
         .then(response => {
           this.currentTask = response.data;
           this.currentTask._id = 0;
-          this.openSnack("Cambios guardados", "success");
+          this.setSnack({
+            isOpen: true,
+            text: "Cambios guardados",
+            color: "success"
+          });
         })
         .catch(error => {
-          this.openSnack(error.response.data.error, "error");
+          this.setSnack({
+            isOpen: true,
+            text: error.response.data.error,
+            color: "error"
+          });
         });
     },
     updateTaskState(task) {
       axios.put(`tasks/${task._id}`, task).catch(error => {
-        this.openSnack(error.response.data.error, "error");
+        this.setSnack({
+          isOpen: true,
+          text: error.response.data.error,
+          color: "error"
+        });
       });
     },
     deleteTask(id) {
       axios.delete(`tasks/${id}`).then(() => {
         this.getUserTasks();
-        this.openSnack("Tarea eliminada con exito", "success");
+        this.setSnack({
+          isOpen: true,
+          text: "Tarea eliminada con exito",
+          color: "success"
+        });
       });
     },
     getPriority(id, returnValue) {
       const priority = this.priorities.find(priority => priority.id == id);
       if (returnValue) return priority.value;
       return priority.color;
-    },
-    openSnack(text, color) {
-      this.snackbar.isOpen = true;
-      this.snackbar.text = text;
-      this.snackbar.color = color;
     }
   }
 };

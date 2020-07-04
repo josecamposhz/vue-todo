@@ -15,7 +15,7 @@
 
     <v-spacer />
 
-    <v-chip v-if="isLogin" class="mx-2" color="green" text-color="white">
+    <v-chip v-if="isLogin" to="/todo" class="mx-2" color="green" text-color="white">
       <v-avatar left class="green darken-4">{{ tasksCounter }}</v-avatar>
       <span class="m-auto">TO DO</span>
     </v-chip>

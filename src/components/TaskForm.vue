@@ -16,13 +16,19 @@
         :key="priority.value"
         v-slot:default="{ active, toggle }"
       >
-        <v-chip class="mx-1" :color="active ? priority.color : 'default'" @click="toggle">{{ priority.value }}</v-chip>
+        <v-chip
+          class="mx-1"
+          :color="active ? priority.color : 'default'"
+          @click="toggle"
+        >{{ priority.value }}</v-chip>
       </v-slide-item>
     </v-slide-group>
   </v-form>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   props: {
     label: {
@@ -54,12 +60,22 @@ export default {
     };
   },
   methods: {
-    sendForm() {
+    ...mapMutations(["setSnack"]),
+    async sendForm() {
       if (this.$refs.taskForm.validate()) {
-        this.$emit("sendForm");
+        // Utilizamos async - await para esperar que se emita el evento antes de resetear el formulario
+        await this.$emit("sendForm");
+        this.resetForm();
       } else {
-        console.log("sendError");
+        this.setSnack({
+          isOpen: true,
+          text: "Formulario inválido",
+          color: "error"
+        });
       }
+    },
+    resetForm() {
+      this.$refs.taskForm.reset();
     }
   }
 };
