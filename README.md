@@ -24,14 +24,6 @@
 * Install [Nodejs](https://nodejs.org/en/)
 * Open your terminal
 * Navigate to the project
-* Run
-```
-npm install
-```
-or
-```
-yarn install
-```
-if you use Yarn
-* Run npm run serve or yarn serve to start a local development server
-* Open http://localhost:8080 with your browser to see the result.
+* Run ``` npm install ``` or ``` yarn install ``` if you use Yarn
+* Run ``` npm run serve ``` or ``` yarn serve ``` to start a local development server
+* Open http://localhost:8080 with your browser to see the result
